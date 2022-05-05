@@ -1,4 +1,4 @@
-import { countValidPasswords, countValidPasswordsNew, passwordMappingItem } from "./2";
+import { countValidPasswords, passwordMappingItem, validator1, validator2 } from "./2";
 
 const input:passwordMappingItem[] = require('./input.json');
 
@@ -9,10 +9,10 @@ describe('1st task', () => {
   })
 
   it('should solve 1', () => {
-    expect(countValidPasswords(input)).toBe(477);
+    expect(countValidPasswords(input, validator1)).toBe(477);
   })
 
   it('should solve 2', () => {
-    expect(countValidPasswordsNew(input)).toBe(686);
+    expect(countValidPasswords(input, validator2)).toBe(686);
   })
 });

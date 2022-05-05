@@ -4,39 +4,29 @@ export interface passwordMappingItem {
   password: string,
 };
 
+type Validator = (rules: number[], password: string, char: string) => boolean;
+
 const parseIndexList = (input: string[]) => {
   return input.map((val: string) => 
     parseInt(val)
   );
 }
 
-export const countValidPasswords = (items: passwordMappingItem[]) => {
+export const countValidPasswords = (items: passwordMappingItem[], validator: Validator) => {
   return items.reduce((prev, curr) => {
-    const rules = curr.range.split('-');
-    const [from, to] = parseIndexList(rules);
-    const passwordLength = curr.password.length;
-    const passWithRemovedChar = curr.password.split(curr.char).join('');
-    const charCount = passwordLength - passWithRemovedChar.length;
+    const rules = parseIndexList(curr.range.split('-'));
+    const isValid = validator(rules, curr.password, curr.char);
 
-    if (charCount >= from && charCount <= to)
-      return prev + 1;
-    else 
-      return prev + 0;
+    return prev + (isValid ? 1 : 0);
   }, 0);  
 };
 
-export const countValidPasswordsNew = (items: passwordMappingItem[]) => {
-  return items.reduce((prev, curr) => {
-    const rules = parseIndexList(curr.range.split('-'));
-    let count = 0;
+export const validator1 = (rules: number[], password: string, char: string) => {
+  const passWithRemovedChar = password.split(char).join('');
+  const charCount = password.length - passWithRemovedChar.length;
+    return charCount >= rules[0] && charCount <= rules[1];
+}
 
-    for (const rule of rules) {
-      count += curr.password[rule-1] === curr.char ? 1 : 0;
-    }
-
-    if (count === 1)
-      return prev + 1;
-    else 
-      return prev + 0;
-  }, 0);  
+export const validator2 = (rules: number[], password: string, char: string) => {
+  return (password[rules[0]-1] === char) != (password[rules[1]-1] === char);
 };
